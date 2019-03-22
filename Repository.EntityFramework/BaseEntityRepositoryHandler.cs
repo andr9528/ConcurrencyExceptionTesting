@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Castle.Core.Internal;
+using Domain.Concrete;
+using Domain.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Repository.Core;
@@ -14,19 +17,19 @@ namespace Repository.EntityFramework
     public abstract class BaseEntityRepositoryHandler : IBaseRepository
     {
         internal EntityRepository repo = null;
-        private bool _useLazyLoading = false;
-        public BaseEntityRepositoryHandler(bool useLazyLoading = true)
+        public BaseEntityRepositoryHandler(EntityRepository repo)
         {
-            repo = new EntityRepository(useLazyLoading);
-            _useLazyLoading = useLazyLoading;
+            this.repo = repo;
         }
 
         public void ResetRepo()
         {
-            repo.Dispose();
-            repo = null;
+            throw new NotImplementedException();
 
-            repo = new EntityRepository(_useLazyLoading);
+            //repo.Dispose();
+            //repo = null;
+
+            //repo = new EntityRepository();
         }
 
         public void Save()
@@ -50,7 +53,7 @@ namespace Repository.EntityFramework
         internal string GetAmountAdded(ICollection<bool> results)
         {
             return string.Format("Added {0} out of {1}.", results.Where(b => b).Count(), results.Count);
-        } 
+        }
         #endregion
 
         #region Find Query Builders
@@ -75,6 +78,36 @@ namespace Repository.EntityFramework
             return query;
         }
         */
+
+        private IQueryable<DummyImplicit> BuildFindDummyImplicitQuery(IDummyImplicit i, IQueryable<DummyImplicit> query)
+        {
+            if (i.ArbitraryInt != default(int))
+                query = query.Where(x => x.ArbitraryInt == i.ArbitraryInt);
+            if (!i.ArbitraryString.IsNullOrEmpty())
+                query = query.Where(x => x.ArbitraryString.Contains(i.ArbitraryString));
+
+            return query;
+        }
+
+        private IQueryable<DummyExplicit> BuildFindDummyExplicitQuery(IDummyExplicit e, IQueryable<DummyExplicit> query)
+        {
+            if (e.ArbitraryInt != default(int))
+                query = query.Where(x => x.ArbitraryInt == e.ArbitraryInt);
+            if (!e.ArbitraryString.IsNullOrEmpty())
+                query = query.Where(x => x.ArbitraryString.Contains(e.ArbitraryString));
+
+            return query;
+        }
+
+        private IQueryable<DummyTimestamp> BuildFindDummyTimestampQuery(IDummyTimestamp t, IQueryable<DummyTimestamp> query)
+        {
+            if (t.ArbitraryInt != default(int))
+                query = query.Where(x => x.ArbitraryInt == t.ArbitraryInt);
+            if (!t.ArbitraryString.IsNullOrEmpty())
+                query = query.Where(x => x.ArbitraryString.Contains(t.ArbitraryString));
+
+            return query;
+        }
 
         #endregion
 
@@ -101,6 +134,29 @@ namespace Repository.EntityFramework
         }
         */
 
+        internal ICollection<DummyImplicit> FindMultipleDummyImplicits(IDummyImplicit i)
+        {
+            var query = repo.DummyImplicits.AsQueryable();
+            query = BuildFindDummyImplicitQuery(i, query);
+
+            return FindMultipleResults(query);
+        }
+
+        internal ICollection<DummyExplicit> FindMultipleDummyExplicits(IDummyExplicit e)
+        {
+            var query = repo.DummyExplicits.AsQueryable();
+            query = BuildFindDummyExplicitQuery(e, query);
+
+            return FindMultipleResults(query);
+        }
+
+        internal ICollection<DummyTimestamp> FindMultipleDummyTimestamps(IDummyTimestamp t)
+        {
+            var query = repo.DummyTimestamps.AsQueryable();
+            query = BuildFindDummyTimestampQuery(t, query);
+
+            return FindMultipleResults(query);
+        }
 
         #endregion
 
@@ -129,6 +185,30 @@ namespace Repository.EntityFramework
         }
         */
 
+        internal IDummyImplicit FindDummyImplicit(IDummyImplicit i)
+        {
+            var query = repo.DummyImplicits.AsQueryable();
+            query = BuildFindDummyImplicitQuery(i, query);
+
+            return FindAResult(query);
+        }
+
+        internal IDummyExplicit FindDummyExplicit(IDummyExplicit e)
+        {
+            var query = repo.DummyExplicits.AsQueryable();
+            query = BuildFindDummyExplicitQuery(e, query);
+
+            return FindAResult(query);
+        }
+
+        internal IDummyTimestamp FindDummyTimestamp(IDummyTimestamp t)
+        {
+            var query = repo.DummyTimestamps.AsQueryable();
+            query = BuildFindDummyTimestampQuery(t, query);
+
+            return FindAResult(query);
+        }
+
         #endregion
 
         #region Add Methods
@@ -140,6 +220,7 @@ namespace Repository.EntityFramework
         internal bool AddYourDomainClass(IYourDomainClass y)
         {
             EntityEntry entry = null;
+            EntityState state = EntityState.Unchanged;
 
             entry = repo.Add(y);
 
@@ -147,6 +228,39 @@ namespace Repository.EntityFramework
             return VerifyEntryState(state, EntityState.Added);
         }        
          */
+
+        internal bool AddDummyImplicit(IDummyImplicit i)
+        {
+            EntityEntry entry = null;
+            EntityState state = EntityState.Unchanged;
+
+            entry = repo.Add(i);
+
+            state = CheckEntryState(state, entry);
+            return VerifyEntryState(state, EntityState.Added);
+        }
+
+        internal bool AddDummyExplicit(IDummyExplicit e)
+        {
+            EntityEntry entry = null;
+            EntityState state = EntityState.Unchanged;
+
+            entry = repo.Add(e);
+
+            state = CheckEntryState(state, entry);
+            return VerifyEntryState(state, EntityState.Added);
+        }
+
+        internal bool AddDummyTimestamp(IDummyTimestamp t)
+        {
+            EntityEntry entry = null;
+            EntityState state = EntityState.Unchanged;
+
+            entry = repo.Add(t);
+
+            state = CheckEntryState(state, entry);
+            return VerifyEntryState(state, EntityState.Added);
+        }
 
         #endregion
 
@@ -159,6 +273,7 @@ namespace Repository.EntityFramework
         internal bool UpdateYourDomainClass(IYourDomainClass y)
         {
             EntityEntry entry = null;
+            EntityState state = EntityState.Unchanged;
 
             entry = repo.Update(y);
 
@@ -167,6 +282,38 @@ namespace Repository.EntityFramework
         }        
          */
 
+        internal bool UpdateDummyImplicit(IDummyImplicit i)
+        {
+            EntityEntry entry = null;
+            EntityState state = EntityState.Unchanged;
+
+            entry = repo.Update(i);
+
+            state = CheckEntryState(state, entry);
+            return VerifyEntryState(state, EntityState.Modified);
+        }
+
+        internal bool UpdateDummyExplicit(IDummyExplicit e)
+        {
+            EntityEntry entry = null;
+            EntityState state = EntityState.Unchanged;
+
+            entry = repo.Update(e);
+
+            state = CheckEntryState(state, entry);
+            return VerifyEntryState(state, EntityState.Modified);
+        }
+
+        internal bool UpdateDummyTimestamp(IDummyTimestamp t)
+        {
+            EntityEntry entry = null;
+            EntityState state = EntityState.Unchanged;
+
+            entry = repo.Update(t);
+
+            state = CheckEntryState(state, entry);
+            return VerifyEntryState(state, EntityState.Modified);
+        }
         #endregion
 
         #region Delete Methods
@@ -178,6 +325,7 @@ namespace Repository.EntityFramework
         internal bool DeleteYourDomainClass(IYourDomainClass y)
         {
             EntityEntry entry = null;
+            EntityState state = EntityState.Unchanged;
 
             entry = repo.Remove(y);
 

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Repository.Core
 {
-    public interface ISerializableRepository
+    public interface ISerializableRepository : IBaseRepository
     {
         /*
          * Classes that implement this class should also inherit from a class implementing IBaseRepository

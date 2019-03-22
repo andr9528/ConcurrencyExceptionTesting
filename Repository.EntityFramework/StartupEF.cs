@@ -18,7 +18,7 @@ namespace Repository.EntityFramework
         }
 
         public IConfiguration Configuration { get; }
-        private  string ConnectionStringName { get; }
+        private string ConnectionStringName { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {

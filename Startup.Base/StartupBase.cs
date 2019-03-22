@@ -2,16 +2,22 @@
 using Microsoft.Extensions.DependencyInjection;
 using Repository.EntityFramework;
 using System;
+using System.IO;
+using System.Text;
 
 namespace Startup.Base
 {
-    public class StartupBase : IStartupEF
+    public abstract class StartupBase : IStartupEF
     {
         private IStartupEF _startupEf = null;
 
-        public StartupBase(IConfiguration configuration, string connectionStringName = "")
+        public StartupBase(string connectionStringName = "")
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+            Configuration = builder.Build();
 
             if (connectionStringName != "")
             {
@@ -19,7 +25,7 @@ namespace Startup.Base
             }
         }
 
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; protected set; }
 
         public void ConfigureServices(IServiceCollection services)
         {

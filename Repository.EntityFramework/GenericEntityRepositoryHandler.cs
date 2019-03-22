@@ -5,12 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Domain.Core;
 
 namespace Repository.EntityFramework
 {
     public class GenericEntityRepositoryHandler : BaseEntityRepositoryHandler, IGenericRepository
     {
-        public GenericEntityRepositoryHandler(bool useLazyLoading = true) : base(useLazyLoading)
+        public GenericEntityRepositoryHandler(EntityRepository repository) : base(repository)
         {
             
         }
@@ -28,13 +29,23 @@ namespace Repository.EntityFramework
                 // case IYourDomainClass y:
                 //    result = AddYourDomainClass(y);
                 //    break;
-
+                case IDummyTimestamp t:
+                    result = AddDummyTimestamp(t);
+                    break;
+                case IDummyExplicit e:
+                    result = AddDummyExplicit(e);
+                    break;
+                case IDummyImplicit i:
+                    result = AddDummyImplicit(i);
+                    break;
                 default:
                     throw new Exception("ERROR ERROR ERROR");
             }
 
             return result;
         }
+
+
 
         string IGenericRepository.AddMultiple<T>(ICollection<T> elements)
         {
@@ -78,12 +89,23 @@ namespace Repository.EntityFramework
                 // case IYourDomainClass y:
                 //    entity = FindYourDomainClass(y);
                 //    break;
+                case IDummyTimestamp t:
+                    entity = FindDummyTimestamp(t);
+                    break;
+                case IDummyExplicit e:
+                    entity = FindDummyExplicit(e);
+                    break;
+                case IDummyImplicit i:
+                    entity = FindDummyImplicit(i);
+                    break;
                 default:
                     throw new Exception("ERROR ERROR ERROR");
             }
 
             return entity as T;
         }
+
+
 
         ICollection<T> IGenericRepository.FindMultiple<T>(T predicate)
         {
@@ -96,6 +118,15 @@ namespace Repository.EntityFramework
                 // case IYourDomainClass y:
                 //    entities = FindMultipleYourDomainClassInPlural(y) as ICollection<T>;
                 //    break;
+                case IDummyTimestamp t:
+                    entities = FindMultipleDummyTimestamps(t) as ICollection<T>;
+                    break;
+                case IDummyExplicit e:
+                    entities = FindMultipleDummyExplicits(e) as ICollection<T>;
+                    break;
+                case IDummyImplicit i:
+                    entities = FindMultipleDummyImplicits(i) as ICollection<T>;
+                    break;
                 default:
                     throw new Exception("ERROR ERROR ERROR");
             }
@@ -117,10 +148,20 @@ namespace Repository.EntityFramework
                 // case IYourDomainClass y:
                 //    result = UpdateYourDomainClass(y);
                 //    break;
+                case IDummyTimestamp t:
+                    result = UpdateDummyTimestamp(t);
+                    break;
+                case IDummyExplicit e:
+                    result = UpdateDummyExplicit(e);
+                    break;
+                case IDummyImplicit i:
+                    result = UpdateDummyImplicit(i);
+                    break;
                 default:
                     throw new Exception("ERROR ERROR ERROR");
             }
 
+            return result;
         }
     }
 }

@@ -1,14 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using Domain.Concrete;
+using Repository.EntityFramework.Config;
 
 namespace Repository.EntityFramework
 {
-    class EntityRepository : DbContext
+
+    // Should NOT be public. Should only be accesible via calls to either of the Handlers.
+    public class EntityRepository : DbContext
     {
-        private bool useLazyLoading;
-        public EntityRepository(bool useLazyLoading = true)
+        private readonly DbContextOptions<EntityRepository> options;
+        private readonly bool useLazyLoading;
+        public EntityRepository(DbContextOptions<EntityRepository> options) : base(options)
         {
-            this.useLazyLoading = useLazyLoading;
+            this.options = options;
+            useLazyLoading = true;
+
+            Database.Migrate();
         }
 
         // Underneath create as many DbSet' as you have domain classes you wish to persist.
@@ -16,6 +24,10 @@ namespace Repository.EntityFramework
 
         // e.g
         // public virtual DbSet<YourDomainClass> YourDomainClassInPlural { get; set; }
+
+        public virtual DbSet<DummyExplicit> DummyExplicits { get; set; }
+        public virtual DbSet<DummyImplicit> DummyImplicits { get; set; }
+        public virtual DbSet<DummyTimestamp> DummyTimestamps { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -33,6 +45,10 @@ namespace Repository.EntityFramework
 
             // e.g
             // modelBuilder.ApplyConfiguration(new YourDomainClassConfig());
+
+            modelBuilder.ApplyConfiguration(new DummyExplicitConfig());
+            modelBuilder.ApplyConfiguration(new DummyImplicitConfig());
+            modelBuilder.ApplyConfiguration(new DummyTimestampConfig());
         }
     }
 }

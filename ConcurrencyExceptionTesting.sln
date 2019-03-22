@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository.EntityFramework"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Startup.Base", "Startup.Base\Startup.Base.csproj", "{45541E81-8A92-491F-A057-2725821F2BDB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{0F594EF7-3D11-4902-A54D-C1DD7AA0F840}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{0F594EF7-3D11-4902-A54D-C1DD7AA0F840}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConcurrencyTester", "ConcurrencyTester\ConcurrencyTester.csproj", "{843C7CBB-CA64-4C44-B60D-EF438A231398}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{0F594EF7-3D11-4902-A54D-C1DD7AA0F840}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F594EF7-3D11-4902-A54D-C1DD7AA0F840}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F594EF7-3D11-4902-A54D-C1DD7AA0F840}.Release|Any CPU.Build.0 = Release|Any CPU
+		{843C7CBB-CA64-4C44-B60D-EF438A231398}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{843C7CBB-CA64-4C44-B60D-EF438A231398}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{843C7CBB-CA64-4C44-B60D-EF438A231398}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{843C7CBB-CA64-4C44-B60D-EF438A231398}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
